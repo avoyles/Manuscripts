@@ -167,9 +167,23 @@ exotic nuclei and those far from stability.
  
 \subsubsection{Simulation of irradiation to calculate the activation and depletion of materials} 
 
-\textred{This section could benefit from a little more context (ideally from someone familiar with this application area) before diving in and a bit more high level view of where the various codes may overlap in utility, what’s unique and what’s covered elsewhere (e.g. any redundancies).   How alike and how different are these various codes?  Do they have similar utility in the same energy range or are they focused on very different areas? It wouldn’t hurt to define a few more terms, like k-eigenvalues and activation and depletion.}
+% \textred{This section could benefit from a little more context (ideally from someone familiar with this application area) before diving in and a bit more high level view of where the various codes may overlap in utility, what’s unique and what’s covered elsewhere (e.g. any redundancies).   How alike and how different are these various codes?  Do they have similar utility in the same energy range or are they focused on very different areas? It wouldn’t hurt to define a few more terms, like k-eigenvalues and activation and depletion.}
 
-The third category in this session, activation and depletion codes, was covered by the talks on FISPIN \cite{Burstall1979}, ORIGEN \cite{Rearden} (as used in HFIRCON), and CINDER \cite{cowell2008manual}, which was tangentially covered in the MCNP6 discussion.
+The third category in this session, activation and depletion codes, was covered by the talks on FISPIN \cite{Burstall1979}, ORIGEN \cite{Rearden} (as used in HFIRCON), and CINDER \cite{cowell2008manual}, which was tangentially covered in the MCNP6 discussion. 
+Activation and depletion codes are used to calculate the time dependent fuel isotopic compositions and accumulation of nuclides during and following irradiation. 
+Activation and depletion codes generally require input of the energy dependent effective cross sections and particle flux --- both using the same energy discretization --- as well as the duration of the time steps for the calculation. 
+From this information total reactions rates are determined and used to solve the system of ordinary differential equations (ODEs) that describe nuclide generation, depletion, and decay. 
+This includes the behaviors of the fissile, fertile, burnable poison and transient fission product isotopes, and may include support for time-dependent additions or removals of material from the system.
+Several different mathematical methodologies have been used over the decades for determining the solution to the series of ODEs, and the numerical accuracy of these
+algorithms are generally sufficient. 
+What differentiates activation and depletion codes is in how they generate the total reaction terms which drive the solution and how they interface with nuclear data and transport codes.
+% This category of codes is used for the calculation of fuel isotopic compositions as a function of time during reactor operation.
+% Using cross section data for the network of multiple interconnected transmutation reactions which occur  in a fissioning system, along with the generation of nuclides through fission yields, these codes track the production and radioactive decay of isotopic species through numerical solution of the Bateman equations.
+% This includes the behaviors of the fissile, fertile, burnable poison and transient fission products isotopes, and may include support for time-dependent additions or removals of material from the system.
+% The process of tracking the generation or buildup of isotopic species is often referred to as \emph{activation}, and \emph{depletion} is used to denote the burnup of isotopic species due to fission and transmutation.
+% In general, all three of these codes overlap in their ability to calculate the evolution of fuel composition during fission, but differ in both the data libraries they draw upon, the incident particles they support, any additional codes that they couple to, as well as additional features unique to each code.
+
+
 
 FISPIN is a standard code used in the UK over the last 60 years to calculate the composition and evolution of irradiated nuclear fuel and related waste streams \cite{Burstall1979}.
 The current release, FISPIN11, has been in development for approximately 4 years and was a complete rewrite of the previous version's solution method to include nuclear reaction data for accelerators.
@@ -180,9 +194,9 @@ It is being pursued as a methodology for handling accelerator-based neutron ener
 In order to improve the predictive capability of this code, quality nuclear data is essential, as models are no longer limited by computational capabilities, but by the uncertainties and covariances in nuclear data.
 Decay data and neutron transmutation cross-sections are of specific interest.
  
-ORIGEN is a generalized activation and depletion code packaged as part of the SCALE code suite \cite{Rearden}.
+ORIGEN is a generalized neutron activation and depletion code packaged as part of the SCALE code suite \cite{Rearden}.
 ORIGEN solves the system of ordinary differential equations that describe nuclide generation, depletion, and decay, of all nuclides in the system, as well as computing the alpha, beta, neutron, and gamma emission spectra during decay.
-HFIRCON is a multi-cycle neutronics and depletion analysis toolkit to automate may irradiation calculations at the High-Flux Isotope Reactor (HFIR).
+HFIRCON is a multi-cycle neutronics and depletion analysis toolkit to automate many irradiation calculations at the High-Flux Isotope Reactor (HFIR).
 It is used for predictions of materials testing, isotope production, and target and core design \cite{wilson2019hfircon}.
 HFIRCON couples an enhanced version of MCNP5 to ORIGEN with ADVANTAG variance reduction \cite{team2003mcnp,Croff1980,Croff1983,Mosher2015}.
 MCNP5 transport utilizes ENDF/B-VII.0 and ENDF/B-VII.1 cross sections supplemented with gamma production data from JEFF3.1.2 \cite{Koning2007,Koning2006}, JENDL4.0u \cite{SHIBATA2011}, CENDL3.1 \cite{Zhigang2007}, and TENDL-2013 \cite{Koning2019}.
@@ -196,26 +210,36 @@ in predicting local heat generation rates.
  
 CINDER is an activation and depletion code that can be used for both neutrons and protons \cite{cowell2008manual}.
 Discussion of planned MCNP6 development indicated that CINDER will be made a callable library for use in coupled calculations in MCNP6 and in other codes.
-The current version of MCNP6 does include an embedded version of CINDER'90 that can be used for k-eigenvalue calculations only.
+The current version of MCNP6 does include an embedded version of CINDER'90 that can be used for determining criticality conditions.
+% k-eigenvalue calculations (a subset of criticality calculations used in time-dependent systems) only.
 Currently, MCNP6 can be coupled to CINDER as well as ORIGEN and FISPACT.
  
 \subsection{Recommendations}
 
-\textred{Group comment: for what reactions and what energy is this true? Please provide feedback from your specific area of expertise. I would suggest to please try to avoid needs based on specific isotopes, as these will change based on the ``working groups'' discussed below.  Keep recommendations more general!  }
+% \textred{Group comment: for what reactions and what energy is this true? Please provide feedback from your specific area of expertise. I would suggest to please try to avoid needs based on specific isotopes, as these will change based on the ``working groups'' discussed below.  Keep recommendations more general!  }
 
 A strong and validated predictive code for reaction data is the single highest priority need for the isotope production community and presents a cross-cutting need for the entire nuclear data community, as many other application spaces rely upon these same codes.
+This holds true in the whole fast neutron range (i.e., above neutron resonances for neutron induced reactions). 
+For charged-particle induced reactions, the resonance region is practically nonexistent due to the Coulomb barrier, so practically this entire energy range is \enquote{fast},  suitable for calculation using statistical model codes, whose
+% Now, if we talk about statistical model codes such as EMPIRE, CoH and essentially TALYS the 
+upper energy limit is approximately 200 MeV. 
+At higher energies (up to approximately 1 GeV), different reaction models and channels that are not included in  statistical codes (e.g., pion production, intranuclear cascades) are needed.
+However, as limited isotope production activities take place in this energy region, the need for GeV-scale predictive codes may be considered a much lower priority than the urgent need for validated codes up to 200 MeV.
 
 
 
 All codes need a larger body of well-characterized experimental data to help tune and benchmark their capabilities.
 However, this approach only creates local improvement for those measured reaction channels \cite{Fox2021}.
-To improve the predictive capabilities of these codes, the consensus is that, 1) global fits are needed, requiring experiments which report all possible measured reaction channels for a given target and beam interaction, 2) improved level density and pre-equilibrium models are needed to effect global improvements rather than just single reaction channels, and 3) the community needs to design a set of \enquote{integral benchmarks} for validation, and can learn from the nuclear criticality community in guiding this process.
+To improve the predictive capabilities of these codes, the consensus is that, 1) global fits are needed, requiring experiments which report (as much as  possible) all observed reaction channels for a given target and beam interaction, 2) improved level density and pre-equilibrium models are needed to effect global improvements rather than just single reaction channels, and 3) the community needs to design a set of \enquote{integral benchmarks} for validation, and can learn from the nuclear criticality community in guiding this process.
 While the accuracy for these data will reasonably vary based on application space, the single-percentage-range of accuracy has been considered as an acceptable target for the community, as experimental groups often lack the  time or capability to do iterative test productions using data with unacceptably large uncertainties.
 As part of these global fits, evaluators need calibration points along the way, not necessarily for reactions that are the ones of interest, but these competing channels will crucially help, especially at high energies ($\gtrapprox$ 50 MeV / nucleon) and when fission barriers come into play in calculations.
 
 Several overarching observations and corresponding recommendations converged upon in this session are provided below.
 
-\textred{For the large-scale campaigns, what type/energy of data is most relevant to you?}
+% \textred{For the large-scale campaigns, what type/energy of data is most relevant to you?}
+
+
+
 
 Large-scale measurement campaigns for reaction data need to be continued, as these present quality data for use in local model improvements.
 The stacked-target experiments give much information on many channels across a wide range of energies, but this is just one class of experiments that the community can pursue.
@@ -236,6 +260,24 @@ Collaboration by way of inviting measurements for reactions of interest to the 
 
 Similarly, pre-equilibrium models could be improved by the development of quantum mechanical models for pre-equilibrium particle emission, rather than the phenomenological models currently employed.
 Collaboration with advanced computing and AI efforts for nuclear data could prove a beneficial partnership as advanced computing needs would likely be required.
+
+
+
+In considering a possible plan for addressing these data needs in a coordinated fashion, several comments may be made about the most relevant types and energies of data currently needed.
+The highest priority are cross sections, since they are usually the easiest to measure. 
+Next come ejectile spectra since  the evaporation peak  provides information about level densities, high energies reveal the direct component, and the transition in between is dominated by pre-equilibrium. 
+Double-differential (that is, $^{\partial^2\sigma}/_{\partial\Omega\partial E}$, both angle- and energy-differential) particle emission spectra allow one to refine this information. 
+This is true for the  emission spectrum of the first ejectile, as subsequent emission spectra should be mostly evaporative, although there will still be a multiple pre-equilibrium component. 
+Separating the first emission spectrum from the experimentally observed spectrum will likely require (anti)coincidence detector setups. 
+The next priority (and possibly the most useful from a global perspective) would be total cross sections, which give us basic information for constructing the optical model potential.  
+Here, we currently have decent coverage (at least for neutrons) already since the total cross section is relatively simple to measure. 
+At higher energies, neutrons and protons are very similar after taking into account the Coulomb term in the optical model. 
+It is possible to skip neutrons below 20 MeV, since these are again well-characterized to date.
+Finally,  simple elastic and inelastic angular distributions  provide essential information for fitting optical model potentials.
+Measuring discrete gamma transitions between discrete levels following inelastic scattering is another source of information used in helping fix  model parameters defining spin and parity distribution of levels in the continuum. 
+These types of experiments have been  done historically with neutrons below 20 MeV,  but are dubiously feasible at higher energies with charged particles.
+It is worth noting that, if a robust predictive capability is needed up to  200 MeV,  these data will need  to be measured to span this entire energy range.
+
 
 As one component of the reaction evaluation process, a potential goal would be the \enquote{modularization} of certain global model components.
 Not only would this allow for more direct cross code comparisons, but it could also be used to see if the various codes agree on certain reactions when the same inputs are used. 
