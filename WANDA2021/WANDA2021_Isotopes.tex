@@ -1,0 +1,272 @@
+\documentclass[article,prc,aps,epsfig,floatfix,twocolumn]{revtex4}
+\usepackage{amssymb}
+%\pagestyle{empty}
+\usepackage{graphicx,psfrag}
+\usepackage[hidelinks]{hyperref}
+\usepackage{csquotes}
+\usepackage[version=3]{mhchem} 
+
+% Red highlighting quick macro
+\usepackage{xcolor}
+\newcommand{\textred}[1]{\textcolor{red}{ #1}}
+
+
+\begin{document}
+
+\title{WANDA 2021 Proceedings}
+
+
+\author{Susan L. Hogle$^{1}$, Ellen M. O'Brien$^{2}$, and Andrew S. Voyles$^{3,4}$}
+
+\affiliation{
+$^1$Oak Ridge National Laboratory, Oak Ridge, TN, USA\break
+$^2$Los Alamos National Laboratory, Los Alamos, NM, USA\break
+$^3$University of California, Berkeley, Berkeley, CA, USA\break
+$^4$Lawrence Berkeley National Laboratory, Berkeley, CA, USA}
+
+
+
+\date{\today}
+
+
+\begin{abstract}
+  Abstract: Less than 500 words please, will reflect content from all working groups.
+
+\end{abstract}
+
+\maketitle
+
+\section{Predictive Codes for Isotope Production}
+
+\subsection{Introduction}
+
+
+Radioisotopes, with unique nuclear properties and decay signatures, are broadly used in medicine, industry, and research.
+Unavoidable production of radioisotopes in reactors and by accelerator beams is also a critical issue for radioprotection for personnel and the general public.
+Large-scale production of radioisotopes in the 20\textsuperscript{th} century was a monumental achievement, leading to life-altering therapeutic and diagnostic medicines, materials interrogation and characterization techniques, long-lived, carbon-free power sources, and the discovery of new elements to push our understanding of the structure, properties, and behavior of atomic nuclei.
+Radioisotopes are produced through bombardment of a target material with a flux of particles or gamma rays to induce nuclear transmutation.
+Effective calculations of the reaction rates and isotope yields resulting from an irradiation are essential to experimental design, both to optimize the radioisotope production and maintain the safety basis for the target, as well as for radioprotection purposes around accelerators and nuclear installations.
+Calculation of reaction rates and isotope yields is performed through a combination of modeling and simulation, coupled with experimental validation and benchmarking.
+
+Within the DOE Isotope Program (DOE IP), cross section needs relevant to isotope production are extensive.
+The Isotope Program's overall goal is to improve data for established isotopes, develop energy-dependent cross-sections (also referred to as \emph{excitation functions}) for emerging ones, and ensure that the gaps in the current body of available data and predictive capabilities are addressed.
+The DOE Isotope Program has currently funded ongoing efforts to investigate and improve high-energy (i.e., $E_n \gtrapprox$ 5 MeV) neutron cross sections in ENDF (Evaluated Nuclear Data File) \cite{Trkov2018} for certain (n,p) reactions, photonuclear reactions, and proton- and deuteron-induced reactions (up to 200 MeV) of programmatic interest.
+The DOE IP has significant nuclear data needs going forward, 
+% and while funding is currently committed for specific efforts, other efforts will not be excluded as these investments have a direct impact on products and services that the program can provide.
+% Additionally, 
+and the program is open to collaborations to accelerate or add scope to current efforts.
+ 
+Improving the predictive capability of modern reaction codes presents a cross-cutting need for the nuclear data community, as it impacts both the casual user of these codes, the data evaluation pipeline, and application spaces such as isotope production, neutronics, shielding, and detection.
+The intent of this session was to act as a conversation between code developers and users to explore the modeling and simulation tools available for prediction of interaction rates and isotope yields, the data needed for effective use of these codes, and the needs for further validation.
+Addressing the identified gaps from this discussion will improve the predictive capabilities of these codes and benefit both the field of isotope production as well as the breadth of the data and applications communities.
+
+\subsection{Prediction of Isotopic Yields}
+
+Prediction of isotopic yields through modeling and simulation relies upon a wide number of computational tools, and may be categorized into a three-part process, each with its own set of predictive codes:
+
+ \begin{enumerate}
+   \item Estimation of nuclear reaction data for the reaction channels: The first stage of effort involves evaluating experimental and theoretical models for reaction channels to produce an excitation function for each reaction, as well as associated secondary-particle spectra.
+   \item Modeling particle transport to determine effective reaction rates or  macroscopic cross sections: The second stage of effort involves simulating transport of the particle or gamma ray flux through the materials in the problem-specific  experiment to determine the effective reaction rates for each reaction channel.
+   \item Simulation of reaction rates during irradiation to calculate the activation and depletion of materials: The third stage of effort involves calculating the activation and depletion of the material over the duration of the experiment and beyond.
+ \end{enumerate}
+
+
+
+% In the case where the interaction rate (2) 
+Cases where the effective macroscopic cross section of a target  changes over the timeline of the irradiation, due to transmutation of the material, requires the use of an iterative process between the second and third stage of the calculation.
+Different modeling and simulation tools are employed in each stage of isotopic yield prediction.
+% However, o
+One open problem facing all three of these categories is that, while current predictive tools may generally be able to reproduce nuclear data and observables for established reactions and routine production activities, they often lack an even reasonable predictive capability when applied to emerging production pathways and other such \enquote{uncharted territory} within the isotope production community.
+While experimental data  are always considered the gold standard, this lack of a predictive power has created a situation where time, funding, and experimental capabilities are necessitated when considering exploring any new production pathway.
+Without reliable predictive tools, new production pathways must be explored experimentally, requiring significant efforts even to show that one proposed pathway is superior to another.
+To help present avenues for solution to this situation, the following sections describe the current state of the art, and available codes used in each stage of this prediction process and identifies current gaps in knowledge and capabilities.
+
+\subsection{Summary of Current Predictive Capabilities  \& Needs}
+
+\subsubsection{Determination of nuclear data for the reaction channels}
+
+Nuclear data for neutron interactions that are tested by use in the nuclear energy industry, or other industrial uses, are generally quite robust, at least up to the energies of relevance for these and associated applications.
+% Due to the use by the nuclear energy industry, nuclear data for neutron interactions near the regions of stability are generally quite robust.
+The standard format for these data is the Evaluated Nuclear Data File (ENDF), which was developed for the storage and retrieval of evaluated nuclear data to be used for applications of nuclear technology.
+The ENDF format provides evaluated representations for neutron cross sections and distributions, photon production from neutron reactions, a limited amount of charged-particle production from neutron reactions, photo-atomic interaction data, thermal neutron scattering data, and radionuclide production and decay data, including fission products \cite{Trkov2018}.
+As reaction data beyond neutron induced reactions are quite sparse in the ENDF library, further evaluated data for charged-particle and photon induced reactions may be found in a number of application-specific databases funded and maintained through the International Atomic Energy Agency's Nuclear Data Section.
+However, due to both the time involved in nuclear data evaluation, as well as the inherently application-specific nature of many of these databases, on-demand access to experimental nuclear data is needed by users prior to evaluation.
+In these cases, users of nuclear reaction data commonly turn to the experimental nuclear reaction database EXFOR \cite{Otuka2014272}, which contains cross sections, differential data, particle spectra, and other nuclear reaction quantities induced by neutron, charged-particle and photon beams.
+At the time of writing,  there are nearly 24,000 experimental works which have been compiled into EXFOR, with approximately 46\% for (n,x) reactions (approximately 95\% of which are for E\textsubscript{n}\textless 14 MeV), 20\% for (p,x), 9\% for (d,x), and 6\% for ($\gamma$,x).
+While the data compiled in EXFOR represents a far broader swath of experimental nuclear data than ENDF, there are still a wide number of reaction channels and residual products with limited data, if any, especially so for the production of emerging radionuclides.
+In situations and energies where well-characterized data for cross sections are unavailable, the isotope production community, as well as other application users, relies upon predictive codes to provide estimates.
+Unfortunately, accurate modeling of even moderately high-energy (say, $\gtrapprox$ 30 MeV / nucleon) reactions is notoriously difficult.
+The current state of predictive reaction modeling codes is only accurate to within approximately 20\% for major (p,x) and (n,x) reaction channels with incident energies below 20 MeV for those cases where a large body of experimental measurements currently exists.
+In cases where few data exist, and reactions with multiple, sequential emissions are concerned,  these codes often exhibit discrepancies anywhere within a factor of 2--50.
+
+
+In the breakdown of predictions of isotopic yields, the first category, predictive codes used to provide nuclear physics and cross section reaction probabilities, was covered in this session by talks given on TALYS \cite{koning2005talys,Koning2012}, EMPIRE-3.2 \cite{Herman2007}, ALICE 2021 \cite{Blann1996,Blann1983}, and CoH$_3$ \cite{kawano2003coh,KAWANO2010,Talou2013,Kawano2019}.
+The calculation of energy-dependent cross sections for the production of  residual nuclei is generally accomplished through various statistical nuclear reaction models.
+In  compound nuclear reaction theory, the statistical Hauser-Feshbach formalism \cite{Hauser1952} is the most commonly employed, which accounts for  conservation of spin and parity at each reaction stage.
+The Weisskopf-Ewing formalism \cite{Weisskopf1940} may be used for high-energy reactions as well, where the quantum effects are somewhat washed out due to the larger number of degrees-of-freedom at these excitation energies.
+
+
+
+The TALYS nuclear model code system, using the Hauser-Feshbach statistical model, is used for both fundamental nuclear physics research and other applications and streamlines its approach such that all important nuclear reaction physics are incorporated into one code scheme \cite{koning2005talys,Koning2012}.
+It currently covers incident neutrons, light ions (up to alpha particles), and photons, with energies up to 1 GeV.
+The predictive power of TALYS is numerically established for incident neutrons, with charged-particle reactions to follow.
+For improvement of this code, efficient access to all experimental data is essential.
+A curated and evaluated selection of these data is also needed  to establish quality.
+Validation data for tuning multiple pre-equilibrium and level density models are needed to improve predictive power, specifically, a nuclide-by-nuclide TALYS parameter adjustment.
+Quality experimental data in order to perform these adjustments is essential.
+ 
+The EMPIRE-3.2 nuclear reaction model code system, which uses the Coupled-Channels, multistep quantum pre-equilibrium and Hauser-Feshbach  models, provides predictions for incident energies up to 150 MeV and projectiles up to alpha particles, in addition to neutrons, photons, and heavy ions \cite{Herman2007}.
+It provides reaction cross sections, residual production cross sections, angular distributions, spectra, and angle-energy distributions of reaction products.
+% , with a $\sim$30\% global predictive accuracy.
+Nuclear data needed to improve the predictive capability of this code include data for tuning level density models, information on pre-equilibrium emission at energies greater than 30 MeV, and reliable theoretical models for going off of the stability line or experimental data to calibrate phenomenological input parameters.
+ 
+ALICE is a Monte Carlo nuclear reaction model code using the Weisskopf-Ewing evaporation and Geometry Dependent Hybrid (GDH) pre-compound decay models \cite{Blann1996,Blann1983}.
+Required inputs include the mass and charge of the target and projectile and projectile energies.
+All other required data/parameters are provided internally by subroutine or data files.
+% In order t
+To improve the predictive capability of this code, benchmarking of the nuclear level density models near shell closure would be valuable in making recommendations for best choices as a function of shell proximity and to indicate areas where more data may be needed.
+The code calculates singly-differential and doubly-differential cross sections of ejectiles (n,p,d,t,\ce{^{3}He},$\alpha$,\ce{^{7}Be}),
+and doubly-differential cross sections of residual nuclei and fission fragments.
+The author (Blann) recommends that ALICE users switch to the newer codes based on Hauser-Feshbach equilibrium emission
+% It is also recommended that recent codes based on the Hauser-Feshbach formulation be used 
+both due to improved physics, and because these codes are actively maintained.
+ 
+CoH$_3$, the Coupled-Channels and Hauser-Feshbach Code, is a statistical model code for compound nuclear reactions, and is a main tool for calculating nuclear reactions for incident neutrons of greater than 1 keV, and targets masses of greater than A = 20 \cite{kawano2003coh,KAWANO2010,Talou2013,Kawano2019}.
+This code provides complete information on nuclear reactions, including reaction cross sections as well as energy and angular distributions of secondary particles.
+The nuclear data needs of this code include information on pre-equilibrium particle emission, because though exciton models work when phenomenological parameters are well-tuned, crude approximations are always involved.
+Ongoing development of quantum mechanical models have a potential for large improvements in this area.
+Another identified need was information on nuclear level densities, as this is the most important quantity for predicting unknown isotope production cross sections and could have the largest uncertainties for high energy reactions.
+Specifically, experimental cross sections  in the vicinity of target reactions of interest are essential.
+ 
+\subsubsection{Modeling particle transport to determine reaction rates}
+The second category of predictive tools covered in this session, transport codes with some predictive physics model capabilities in addition to imported data libraries, was covered by the talks given on FLUKA \cite{Battistoni2015,fasso2005fluka}, MCNP \cite{Werner2018,werner2017mcnp}, and LISE++ \cite{Tarasov2016,Tarasov2008}.
+
+FLUKA is a general-purpose tool for calculation of particle transport and interactions with matter \cite{Battistoni2015,fasso2005fluka}.
+It is capable of computing excitation functions from thermal energies to multi-TeV energies.
+It includes its own nuclear models which are able to predict isotope production over a very range, starting from 20 MeV for  projectiles including nucleons, mesons, kaons, and light and heavy ions. 
+The typical accuracy of Fluka isotope predictions is $\pm$ 30\%, sometimes significantly better, and occasionally much worse.
+It also has a built-in capability for evolution and buildup of induced activity under arbitrary irradiation profiles, with up to five different decay channels per isotope.
+In order to improve the predictive capability of this code, reliable experimental data in the form of low energy neutron transport, charged-particle reactions, and nuclear reactions is needed.
+In addition, nuclear structure data is essential, particularly when populating residual nuclei near drip lines which are heavily populated in medium/high energy reactions where mass, levels, spin, parity, and decay data for exotic isotopes are important.
+  
+MCNP6 is the LANL general purpose, continuous-energy Monte Carlo radiation transport code that can be used for neutron, photon, electron, or coupled neutron/photon/electron transport \cite{Werner2018,werner2017mcnp}.
+It has internal activation and depletion capabilities for some applications and can be coupled externally to provide this capability for other applications.
+Improvements currently being implemented or planned for future work revolve around the modularization of the code components, as this will facilitate improved testing and correctness of the code, easier maintainability, and future ease of feature development and integration.
+The event record, currently in the form of a history file, will be deprecated in favor of a PTRAC-based capability.
+There is currently ongoing methods development, specifically code improvements related to charged-particle transport, with data and model physics updates as necessary.
+To improve the predictive capabilities of MCNP6, validation is needed in the form of benchmark experiments and models that integrate collision physics data and models as well as residual nuclide and production/depletion calculations.
+ 
+LISE++ is a code that predicts intensities and purities of rare isotope beams for the planning of future experiments with in-flight separators \cite{Tarasov2016,Tarasov2008}.
+This is essential for tuning of rare isotope beams where results can be quickly compared with on-line data.
+This code is applicable for low, medium, and high-energy facilities including fragment- and recoil-separators with electrostatic and/or magnetic selection.
+LISE++ has a strong reliance on databases for ionization energies, experimental production cross sections, compound materials, and fission barriers.
+In order to improve the predictive capabilities of this code, nuclear data needs include an isomeric states database, production cross sections, and information on fission barriers and fragment momentum distributions.
+Additionally, detailed information on the excitation energy of fissile nuclei after abrasion is needed, particularly for 
+% This code has a particular interest in this information for
+exotic nuclei and those far from stability.
+ 
+\subsubsection{Simulation of irradiation to calculate the activation and depletion of materials} 
+
+\textred{This section could benefit from a little more context (ideally from someone familiar with this application area) before diving in and a bit more high level view of where the various codes may overlap in utility, what’s unique and what’s covered elsewhere (e.g. any redundancies).   How alike and how different are these various codes?  Do they have similar utility in the same energy range or are they focused on very different areas? It wouldn’t hurt to define a few more terms, like k-eigenvalues and activation and depletion.}
+
+The third category in this session, activation and depletion codes, was covered by the talks on FISPIN \cite{Burstall1979}, ORIGEN \cite{Rearden} (as used in HFIRCON), and CINDER \cite{cowell2008manual}, which was tangentially covered in the MCNP6 discussion.
+
+FISPIN is a standard code used in the UK over the last 60 years to calculate the composition and evolution of irradiated nuclear fuel and related waste streams \cite{Burstall1979}.
+The current release, FISPIN11, has been in development for approximately 4 years and was a complete rewrite of the previous version's solution method to include nuclear reaction data for accelerators.
+A code called the Production Rate Assessment Tool has been built around the general purpose FISPIN11 kernel to estimate the composition of targets irradiated in arbitrary spectra and then cooled. 
+The first version of this tool only considers irradiation of thin targets by neutrons (below 20 MeV).
+% This code makes several assumptions, including thin targets and neutron-only sources.
+It is being pursued as a methodology for handling accelerator-based neutron energy spectra.
+In order to improve the predictive capability of this code, quality nuclear data is essential, as models are no longer limited by computational capabilities, but by the uncertainties and covariances in nuclear data.
+Decay data and neutron transmutation cross-sections are of specific interest.
+ 
+ORIGEN is a generalized activation and depletion code packaged as part of the SCALE code suite \cite{Rearden}.
+ORIGEN solves the system of ordinary differential equations that describe nuclide generation, depletion, and decay, of all nuclides in the system, as well as computing the alpha, beta, neutron, and gamma emission spectra during decay.
+HFIRCON is a multi-cycle neutronics and depletion analysis toolkit to automate may irradiation calculations at the High-Flux Isotope Reactor (HFIR).
+It is used for predictions of materials testing, isotope production, and target and core design \cite{wilson2019hfircon}.
+HFIRCON couples an enhanced version of MCNP5 to ORIGEN with ADVANTAG variance reduction \cite{team2003mcnp,Croff1980,Croff1983,Mosher2015}.
+MCNP5 transport utilizes ENDF/B-VII.0 and ENDF/B-VII.1 cross sections supplemented with gamma production data from JEFF3.1.2 \cite{Koning2007,Koning2006}, JENDL4.0u \cite{SHIBATA2011}, CENDL3.1 \cite{Zhigang2007}, and TENDL-2013 \cite{Koning2019}.
+Depletion calculations use SCALE-ORIGEN data.
+In order to improve the predictive capability of this tool, reaction cross sections for isotopes which are not currently in the ENDF or JEFF libraries are needed, for example, \ce{^{187}W} and \ce{^{188}W}.
+A full evaluation of these reactions, with scattering and secondary particle production, is not needed to perform the ORIGEN activation and depletion  for this application space.
+However, gamma production data is  extremely vital for these calculations, 
+% as predicted 
+in predicting local heat generation rates.
+% are often significantly off.
+ 
+CINDER is an activation and depletion code that can be used for both neutrons and protons \cite{cowell2008manual}.
+Discussion of planned MCNP6 development indicated that CINDER will be made a callable library for use in coupled calculations in MCNP6 and in other codes.
+The current version of MCNP6 does include an embedded version of CINDER'90 that can be used for k-eigenvalue calculations only.
+Currently, MCNP6 can be coupled to CINDER as well as ORIGEN and FISPACT.
+ 
+\subsection{Recommendations}
+
+\textred{Group comment: for what reactions and what energy is this true? Please provide feedback from your specific area of expertise. I would suggest to please try to avoid needs based on specific isotopes, as these will change based on the ``working groups'' discussed below.  Keep recommendations more general!  }
+
+A strong and validated predictive code for reaction data is the single highest priority need for the isotope production community and presents a cross-cutting need for the entire nuclear data community, as many other application spaces rely upon these same codes.
+
+
+
+All codes need a larger body of well-characterized experimental data to help tune and benchmark their capabilities.
+However, this approach only creates local improvement for those measured reaction channels \cite{Fox2021}.
+To improve the predictive capabilities of these codes, the consensus is that, 1) global fits are needed, requiring experiments which report all possible measured reaction channels for a given target and beam interaction, 2) improved level density and pre-equilibrium models are needed to effect global improvements rather than just single reaction channels, and 3) the community needs to design a set of \enquote{integral benchmarks} for validation, and can learn from the nuclear criticality community in guiding this process.
+While the accuracy for these data will reasonably vary based on application space, the single-percentage-range of accuracy has been considered as an acceptable target for the community, as experimental groups often lack the  time or capability to do iterative test productions using data with unacceptably large uncertainties.
+As part of these global fits, evaluators need calibration points along the way, not necessarily for reactions that are the ones of interest, but these competing channels will crucially help, especially at high energies ($\gtrapprox$ 50 MeV / nucleon) and when fission barriers come into play in calculations.
+
+Several overarching observations and corresponding recommendations converged upon in this session are provided below.
+
+\textred{For the large-scale campaigns, what type/energy of data is most relevant to you?}
+
+Large-scale measurement campaigns for reaction data need to be continued, as these present quality data for use in local model improvements.
+The stacked-target experiments give much information on many channels across a wide range of energies, but this is just one class of experiments that the community can pursue.
+Rather than just reporting production cross sections, other reaction observables are also needed including cross sections for the production of stable isotopes and secondary particle spectra.
+Historically, stable isotope production is often neglected in isotope production measurements, but since these data are attainable, they are definitely valuable, and provide another strong set of constraints in adjusting code performance.
+However, these require other measurement techniques besides the decay spectroscopy routinely employed in cross section measurements.
+This may include chemical and physical methods (such as ICP-MS and other chromatographic techniques), as well as the use of prompt gamma spectroscopy, which can give a more general view into angular momentum and level densities.
+Secondary particle spectra are useful from a physics modeling perspective, but are not the easiest to measure.
+However, as a function of angle, their ability to partially nail down level densities and to tie down contributions between compound and pre-equilibrium implies that establishing capabilities for their measurement would make significant contributions to the improvement of modeling capabilities.
+It is worth noting that for these non-traditional classes of experiments, it is not in question that this type of data would be informative, but, rather, the feasibility of this type of data at the higher energies is the challenging question to address.
+
+Historically, these nuclear data measurement campaigns have been driven by the desire to measure production rates for reaction channels of interest to the isotope production community.
+However, it is evident that having a \enquote{working group} of both theorists and experimentalists could be a more efficient way to organize these campaigns, as theorists could help identify which measurements could have the biggest impact on improving codes.
+
+Nuclear structure data are needed for tuning level density and pre-equilibrium models used in all codes.
+Partnering with the astrophysics community could help in funded activities for this, as they have established detector array and analysis code setups for these measurements.
+Collaboration by way of inviting measurements for reactions of interest to the isotope production community would be an efficient way to measure these data without the need for establishing independent capabilities.
+
+Similarly, pre-equilibrium models could be improved by the development of quantum mechanical models for pre-equilibrium particle emission, rather than the phenomenological models currently employed.
+Collaboration with advanced computing and AI efforts for nuclear data could prove a beneficial partnership as advanced computing needs would likely be required.
+
+As one component of the reaction evaluation process, a potential goal would be the \enquote{modularization} of certain global model components.
+Not only would this allow for more direct cross code comparisons, but it could also be used to see if the various codes agree on certain reactions when the same inputs are used. 
+This facilitates a more clear comparison of codes, as well as highlights deficiencies in either the physics models employed by individual codes, or the implementation thereof.
+
+
+
+
+Currently, the isotope production community uses a combination of modeling codes and EXFOR when production data are needed to guide activities.
+With the exception of beam monitor reactions and a selected set of reactions for production of therapeutic or diagnostic isotopes, there is no ongoing effort to evaluate charged-particle production data, and many of the other production modalities employed lack a proper evaluation as well.
+The isotope production community  needs  an evaluated database for the production data currently being measured and used.
+Predictive codes will play an integral role in this evaluation, so their capabilities are needed here as well.
+An \enquote{evaluated} EXFOR database, where clear experimental outliers are identified and compilation errors are corrected, would also be of great value. 
+It would enable efficient parameter optimization of nuclear model codes, increasing their predictive power.
+It is recommended that a charged-particle evaluation subcommittee be added to the Cross Section Evaluation Working Group (CSWEG) in order to keep this effort as a sustained focus.
+Notably, it is important to emphasize that it is not necessarily the charged-particle aspect that will be unique for this evaluation work, but the fact that the high-energy modeling is unique.
+Compared to the majority of reaction evaluation, which focuses on neutrons below 14 MeV, the reaction mechanisms and pre-equilibrium at these high energies are truly the hallmark of this new evaluation type.
+The intent of such an evaluated database for isotope production needs is to function similarly to ENDF, a resource that supports all the codes and applications, a standardized resource.
+If predictive capabilities can globally improve, it is possible to reduce the number of unique, specific experimental measurements that have to be done every time a new idea or reaction becomes relevant.
+
+In conjunction with this evaluation effort, the isotope production community needs to design a set of \enquote{integral benchmarks} for validation of predictive codes and can take a page from the criticality community in guiding this process.
+
+All but the quantum mechanical pre-equilibrium modeling are recommendations that have a strong potential for soliciting funding activities and are the highest outstanding needs for our community.
+As this area grows from year to year, an evaluation group will be required to help process the large volumes of data currently being produced.
+
+
+\section*{Acknowledgments}
+This work has been performed under the auspices of the U.S. Department of Energy by Lawrence Berkeley National Laboratory under contract No. DE-AC02-05CH1123, Los Alamos National Laboratory operated by Triad National Security, LLC, for the National Nuclear Security Administration of U.S. Department of Energy (Contract No. 89233218CNA000001), and Oak Ridge National Laboratory under Contract No. DE-AC05-00OR22725.  This research is supported by the U.S. Department of Energy Isotope Program, managed by the Office of Science for Isotope R\&D and Production.
+
+
+\IfFileExists{../../library.bib}{\bibliography{../../library}}{\bibliography{library}}
+
+\end{document}
+
